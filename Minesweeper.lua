@@ -63,13 +63,14 @@ cursorY = nil
 ---------------------
 
 
-
+----------------
 ---- EVENTS ----
+----------------
 function on.construction()
     images = {}
     for img_name, img_resource in pairs(_R.IMG) do
         images[img_name] = image.new(img_resource)
-
+        
         if img_name:sub(1, 3) == 'num' then
             images[img_name] = images[img_name]:copy(images[img_name]:width(), images[img_name]:height() - 1)
         end
@@ -77,7 +78,7 @@ function on.construction()
             images[img_name] = images[img_name]:copy(images[img_name]:width() - 4, images[img_name]:height() - 4)
         end
     end
-
+    
     startGame()
 end
 
@@ -86,7 +87,7 @@ function on.timer()
     if time >= 999 then
         gameOver(false)
     end
-
+    
     platform.window:invalidate()
 end
 
@@ -140,8 +141,8 @@ end
 
 function on.charIn(char)
     if gameover then return end
-
-    if char == '-' or char == 'f' then
+    
+    if char == '−' or char == 'f' then
         flag()
     end
 end
@@ -155,7 +156,7 @@ function on.enterKey()
         timer.start(1)
         madeFirstClick = true
     end
-
+    
     if field[cursorY][cursorX] ~= tile.flag then
         field[cursorY][cursorX] = fieldReal[cursorY][cursorX]
         if field[cursorY][cursorX] == tile.bomb then
@@ -167,11 +168,11 @@ function on.enterKey()
             platform.window:invalidate()
         end
     end
-
+    
     if hasWon() and not gameover then
         gameOver(true)
     end
-
+    
     platform.window:invalidate()
 end
 
@@ -209,11 +210,14 @@ end
 
 function on.arrowKey()
     cursor.hide()
-end
+end 
+----------------
 ----------------
 
 
-
+-------------------
+---- FUNCTIONS ----
+-------------------
 function setMines()
     for x = 1,numMines do
         rx = math.random(numCols)
@@ -231,7 +235,7 @@ function setMines()
             rx = math.random(numCols)
             ry = math.random(numRows)
         end
-
+        
         fieldReal[ry][rx] = tile.bomb
     end
 end
@@ -241,7 +245,7 @@ function setHints()
         for x,col in pairs(row) do
             if fieldReal[y][x] ~= 9 then
                 number = 0
-
+                
                 if y-1 > 0 and fieldReal[y-1][x] == 9 then
                     number = number + 1
                 end
@@ -266,7 +270,7 @@ function setHints()
                 if y-1 > 0 and x-1 > 0 and fieldReal[y-1][x-1] == 9 then
                     number = number + 1
                 end
-
+                
                 fieldReal[y][x] = number
             end
         end
@@ -275,7 +279,7 @@ end
 
 function flag()
     currTile = field[cursorY][cursorX]
-
+    
     if currTile == tile.normal then
         if mineCount - 1 > -100 then
             field[cursorY][cursorX] = tile.flag
@@ -292,7 +296,7 @@ function flag()
     elseif currTile == tile.marked then
         field[cursorY][cursorX] = tile.normal
     end
-
+    
     platform.window:invalidate()
 end
 
@@ -317,9 +321,9 @@ function revealAllEmpty(x,y)
         if field[y][x] == tile.flag then
             mineCount = mineCount + 1
         end
-
+        
         set(x,y,fieldReal[y][x])
-
+        
         if fieldReal[y][x] == tile.nothing then
             for nx = -1,1 do
                 for ny = -1,1 do
@@ -356,7 +360,7 @@ function hasWon()
             end
         end
     end
-
+    
     if revealedNum + numMines == numRows * numCols then
         return true
     end
@@ -367,17 +371,17 @@ function startGame()
     if currentLevel == nil then
         currentLevel = defaultLevel
     end
-
+    
     numRows = levels[currentLevel].rows
     numCols = levels[currentLevel].cols
     numMines = levels[currentLevel].mines
     fieldWidth = numCols * tileSize
     fieldHeight = numRows * tileSize
     mineCount = numMines
-
+    
     cursorX = math.floor(numCols/2)
     cursorY = math.floor(numRows/2)
-
+    
     smileyState = smiley.smile
     gameover = false
     madeFirstClick = false
@@ -385,7 +389,7 @@ function startGame()
     field = {}
     fieldReal = {}
     revealed = {}
-
+    
     for y = 1,numRows do
         field[y] = {}
         fieldReal[y] = {}
@@ -410,10 +414,13 @@ function gameOver(win)
         platform.window:invalidate()
     end
 end
+-------------------
+-------------------
 
 
-
+-----------------
 ---- DRAWING ----
+-----------------
 function drawField(gc, x, y)
     dy = y
     for y, row in pairs(field) do
@@ -424,7 +431,7 @@ function drawField(gc, x, y)
                     gc:drawImage(images['tile_' .. tileName], dx, dy)
                 end
             end
-
+            
             dx = dx + tileSize
             if x == numCols then
                 dy = dy + tileSize
@@ -441,25 +448,25 @@ function drawNum(gc, num, x, y)
         if numStr:len() == 1 then
             prefix = '00'
         end
-
+        
         if numStr:len() == 2 then
             prefix = '0'
         end
-
+        
         numStr = prefix .. numStr
-
+        
         gc:drawImage(images['num'..numStr:sub(1,1)], x, y)
         gc:drawImage(images['num'..numStr:sub(2,2)], x + images.num0:width() - 1, y)
         gc:drawImage(images['num'..numStr:sub(3,3)], x + images.num0:width()*2 - 2, y)
     else
         numStr = numStr:sub(2)
-
+    
         if numStr:len() == 1 then
             prefix = '0'
         end
-
+        
         numStr = prefix .. numStr
-
+        
         gc:drawImage(images.numMinus, x, y)
         gc:drawImage(images['num'..numStr:sub(1,1)], x + images.num0:width() - 1, y)
         gc:drawImage(images['num'..numStr:sub(2,2)], x + images.num0:width()*2 - 2, y)
@@ -477,8 +484,8 @@ end
 function drawCursor(gc, fieldX, fieldY)
     x = fieldX + tileSize * (cursorX-1)
     y = fieldY + tileSize * (cursorY-1)
-
-
+    
+    
     gc:setPen('medium')
     gc:drawRect(x-1, y-1, tileSize+1, tileSize+1)
 end
@@ -490,24 +497,24 @@ function on.paint(gc)
     if currentLevel == 'beginner' then
         fieldX = platform.window:width()/2 - fieldWidth/2
         fieldY = platform.window:height() - fieldHeight - 10
-
+        
         gc:drawImage(images.border_split_left, fieldX - images.border_corner_top_left:width(), fieldY - images.border_corner_top_left:height())
         gc:drawImage(images.border_split_right, fieldX + numCols * tileSize, fieldY - images.border_corner_top_right:height())
         gc:drawImage(images.border_corner_bottom_left, fieldX - images.border_corner_bottom_left:width(), fieldY + numRows * tileSize)
         gc:drawImage(images.border_corner_bottom_right, fieldX + numCols * tileSize, fieldY + numRows * tileSize)
-
+        
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY)
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 1)
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 2)
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 3)
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 4)
-
+        
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY)
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 1)
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 2)
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 3)
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 4)
-
+        
         gc:drawImage(images.border_horizontal, fieldX, fieldY - images.border_horizontal:height())
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, fieldY - images.border_horizontal:height())
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, fieldY - images.border_horizontal:height())
@@ -518,7 +525,7 @@ function on.paint(gc)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 7, fieldY - images.border_horizontal:height())
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 8, fieldY - images.border_horizontal:height())
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 9, fieldY - images.border_horizontal:height())
-
+        
         gc:drawImage(images.border_horizontal, fieldX, fieldY + numRows * tileSize)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, fieldY + numRows * tileSize)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, fieldY + numRows * tileSize)
@@ -529,14 +536,14 @@ function on.paint(gc)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 7, fieldY + numRows * tileSize)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 8, fieldY + numRows * tileSize)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 9, fieldY + numRows * tileSize)
-
+           
         drawField(gc, fieldX, fieldY)
-
+        
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), 0)
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, 0)
         gc:drawImage(images.border_corner_top_left, fieldX - images.border_corner_top_left:width(), 0)
         gc:drawImage(images.border_corner_top_right, fieldX + numCols * tileSize, 0)
-
+        
         gc:drawImage(images.border_horizontal, fieldX, 0)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, 0)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, 0)
@@ -547,33 +554,33 @@ function on.paint(gc)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 7, 0)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 8, 0)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 9, 0)
-
+        
         drawNum(gc, mineCount, fieldX - 1, 10 - 1)
         drawNum(gc, time, fieldX + numCols * tileSize - 3 * (images.num0:width() - 1), 10 - 1)
         drawSmiley(gc, platform.window:width()/2 - images.smiley_smile:width()/2 - 1, 10 - 1)
-
+        
         drawCursor(gc, fieldX, fieldY)
     elseif currentLevel == 'intermediate' then
         fieldX = platform.window:width()/2 - fieldWidth/2
         fieldY = platform.window:height() - fieldHeight - 10
-
+        
         gc:drawImage(images.border_split_left, fieldX - images.border_corner_top_left:width(), fieldY - images.border_corner_top_left:height())
         gc:drawImage(images.border_split_right, fieldX + numCols * tileSize, fieldY - images.border_corner_top_right:height())
         gc:drawImage(images.border_corner_bottom_left, fieldX - images.border_corner_bottom_left:width(), fieldY + numRows * tileSize)
         gc:drawImage(images.border_corner_bottom_right, fieldX + numCols * tileSize, fieldY + numRows * tileSize)
-
+        
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY)
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 1)
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 2)
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 3)
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 4)
-
+        
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY)
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 1)
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 2)
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 3)
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 4)
-
+        
         gc:drawImage(images.border_horizontal, fieldX, fieldY - images.border_horizontal:height())
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, fieldY - images.border_horizontal:height())
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, fieldY - images.border_horizontal:height())
@@ -589,7 +596,7 @@ function on.paint(gc)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 12, fieldY - images.border_horizontal:height())
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 13, fieldY - images.border_horizontal:height())
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 14, fieldY - images.border_horizontal:height())
-
+        
         gc:drawImage(images.border_horizontal, fieldX, fieldY + numRows * tileSize)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, fieldY + numRows * tileSize)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, fieldY + numRows * tileSize)
@@ -605,14 +612,14 @@ function on.paint(gc)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 12, fieldY + numRows * tileSize)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 13, fieldY + numRows * tileSize)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 14, fieldY + numRows * tileSize)
-
+        
         drawField(gc, fieldX, fieldY)
-
+        
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), 0)
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, 0)
         gc:drawImage(images.border_corner_top_left, fieldX - images.border_corner_top_left:width(), 0)
         gc:drawImage(images.border_corner_top_right, fieldX + numCols * tileSize, 0)
-
+        
         gc:drawImage(images.border_horizontal, fieldX, 0)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, 0)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, 0)
@@ -628,33 +635,33 @@ function on.paint(gc)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 12, 0)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 13, 0)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 14, 0)
-
+        
         drawNum(gc, mineCount, fieldX - 1, 10 - 1)
         drawNum(gc, time, fieldX + numCols * tileSize - 3 * (images.num0:width() - 1), 10 - 1)
         drawSmiley(gc, platform.window:width()/2 - images.smiley_smile:width()/2 - 1, 10 - 1)
-
+        
         drawCursor(gc, fieldX, fieldY)
     elseif currentLevel == 'expert' then
         fieldX = platform.window:width()/2 - fieldWidth/2
         fieldY = platform.window:height() - fieldHeight - 10
-
+        
         gc:drawImage(images.border_split_left, fieldX - images.border_corner_top_left:width(), fieldY - images.border_corner_top_left:height())
         gc:drawImage(images.border_split_right, fieldX + numCols * tileSize, fieldY - images.border_corner_top_right:height())
         gc:drawImage(images.border_corner_bottom_left, fieldX - images.border_corner_bottom_left:width(), fieldY + numRows * tileSize)
         gc:drawImage(images.border_corner_bottom_right, fieldX + numCols * tileSize, fieldY + numRows * tileSize)
-
+        
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY)
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 1)
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 2)
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 3)
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 4)
-
+        
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY)
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 1)
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 2)
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 3)
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 4)
-
+        
         gc:drawImage(images.border_horizontal, fieldX, fieldY - images.border_horizontal:height())
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, fieldY - images.border_horizontal:height())
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, fieldY - images.border_horizontal:height())
@@ -673,7 +680,7 @@ function on.paint(gc)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 15, fieldY - images.border_horizontal:height())
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 16, fieldY - images.border_horizontal:height())
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 17, fieldY - images.border_horizontal:height())
-
+        
         gc:drawImage(images.border_horizontal, fieldX, fieldY + numRows * tileSize)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, fieldY + numRows * tileSize)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, fieldY + numRows * tileSize)
@@ -692,14 +699,14 @@ function on.paint(gc)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 15, fieldY + numRows * tileSize)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 16, fieldY + numRows * tileSize)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 17, fieldY + numRows * tileSize)
-
+        
         drawField(gc, fieldX, fieldY)
-
+        
         gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), 0)
         gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, 0)
         gc:drawImage(images.border_corner_top_left, fieldX - images.border_corner_top_left:width(), 0)
         gc:drawImage(images.border_corner_top_right, fieldX + numCols * tileSize, 0)
-
+        
         gc:drawImage(images.border_horizontal, fieldX, 0)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, 0)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, 0)
@@ -718,20 +725,24 @@ function on.paint(gc)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 15, 0)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 16, 0)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 17, 0)
-
+        
         drawNum(gc, mineCount, fieldX - 1, 10 - 1)
         drawNum(gc, time, fieldX + numCols * tileSize - 3 * (images.num0:width() - 1), 10 - 1)
         drawSmiley(gc, platform.window:width()/2 - images.smiley_smile:width()/2 - 1, 10 - 1)
-
+        
         drawCursor(gc, fieldX, fieldY)
     end
 end
 -----------------
+-----------------
 
 
 
+----------------------
 ---- TOOL PALETTE ----
+----------------------
 function setLevel(_, level)
+    timer.stop()
     currentLevel = level:lower()
     startGame()
     platform.window:invalidate()
@@ -752,7 +763,7 @@ function toggleMarks(_, toggle)
         marks = false
         toolpalette.enable("Marks", "Enable", true)
         toolpalette.enable("Marks", "Disable", false)
-
+        
         for y,row in pairs(field) do
             for x,col in pairs(row) do
                 if col == tile.marked then
@@ -780,6 +791,7 @@ menu = {
 
 toolpalette.register(menu)
 toolpalette.enable("Marks", "Disable", false)
+----------------------
 ----------------------
 
 
