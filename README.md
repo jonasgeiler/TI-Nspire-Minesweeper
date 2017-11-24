@@ -1,8 +1,8 @@
 # TI-Nspire Minesweeper
 A simple Minesweeper-Clone made for the TI-Nspire with Lua.
 
+The images used are from the original Minesweeper Game. I don't own them.<br>
 **Warning:** This game is only tested on TI-Nspire CX CAS (OS Version 4.5), so there might be bugs on other platforms.
-The images used are from the original Minesweeper Game. I don't own them.
 
 ## Controls
 Move Cursor = Arrow Keys<br>
