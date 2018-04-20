@@ -400,11 +400,67 @@ function startGame()
     end
 end
 
+function getHighscores()
+    local hi_beginner = nil
+
+    if not var.recall("hi_beginner") then
+        hi_beginner = -1
+        var.store("hi_beginner", hi_beginner)
+    else
+        hi_beginner = var.recall("hi_beginner")
+    end
+    
+    
+    local hi_intermediate = nil
+    
+    if not var.recall("hi_intermediate") then
+        hi_intermediate = -1
+        var.store("hi_intermediate", hi_intermediate)
+    else
+        hi_intermediate = var.recall("hi_intermediate")
+    end
+    
+    
+    local hi_expert = nil
+    
+    if not var.recall("hi_expert") then
+        hi_expert = -1
+        var.store("hi_expert", hi_expert)
+    else
+        hi_expert = var.recall("hi_expert")
+    end
+    
+    return hi_beginner, hi_intermediate, hi_expert
+end
+
+function checkHighscore()
+    local hi_beginner, hi_intermediate, hi_expert = getHighscores()
+    
+    if currentLevel == 'beginner' then
+        if hi_beginner == -1 or time < hi_beginner then
+            var.store("hi_beginner", time)
+        end
+    elseif currentLevel == 'intermediate' then
+        if hi_intermediate == -1 or time < hi_intermediate then
+            var.store("hi_intermediate", time)
+        end
+    elseif currentLevel == 'expert' then
+        if hi_expert == -1 or time < hi_expert then
+            var.store("hi_expert", time)
+        end
+    end
+    
+    reloadMenu()
+end
+
 function gameOver(win)
     if win then
         gameover = true
         timer.stop()
         smileyState = smiley.cool
+        
+        checkHighscore()
+        
         platform.window:invalidate()
     else
         gameover = true
@@ -748,6 +804,34 @@ function setLevel(_, level)
     platform.window:invalidate()
 end
 
+
+
+function getHighscoreStrings()
+    local hi_beginner, hi_intermediate, hi_expert = getHighscores()
+    
+    local hi_beginner_str, hi_intermediate_str, hi_expert_str
+    
+    if hi_beginner == -1 then
+        hi_beginner_str = "None"
+    else
+        hi_beginner_str = hi_beginner .. " sec"
+    end
+    
+    if hi_intermediate == -1 then
+        hi_intermediate_str = "None"
+    else
+        hi_intermediate_str = hi_intermediate .. " sec"
+    end
+        
+    if hi_expert == -1 then
+        hi_expert_str = "None"
+    else
+        hi_expert_str = hi_expert .. " sec"
+    end
+    
+    return hi_beginner_str, hi_intermediate_str, hi_expert_str
+end
+
 function restart()
     timer.stop()
     startGame()
@@ -775,6 +859,8 @@ function toggleMarks(_, toggle)
     end
 end
 
+hi_beginner_str, hi_intermediate_str, hi_expert_str = getHighscoreStrings()
+
 menu = {
     {"Level",
         {"Restart", restart},
@@ -786,11 +872,47 @@ menu = {
     {"Marks",
         {"Enable", toggleMarks},
         {"Disable", toggleMarks}
+    },
+    {"Highscores",
+        {"Beginner - " .. hi_beginner_str, function() end},
+        {"Intermediate - " .. hi_intermediate_str, function() end},
+        {"Expert - " .. hi_expert_str, function() end}
     }
 }
 
 toolpalette.register(menu)
 toolpalette.enable("Marks", "Disable", false)
+
+function reloadMenu()
+    hi_beginner_str, hi_intermediate_str, hi_expert_str = getHighscoreStrings()
+    
+    menu = {
+        {"Level",
+            {"Restart", restart},
+            "-",
+            {"Beginner", setLevel},
+            {"Intermediate", setLevel},
+            {"Expert", setLevel}
+        },
+        {"Marks",
+            {"Enable", toggleMarks},
+            {"Disable", toggleMarks}
+        },
+        {"Highscores",
+            {"Beginner - " .. hi_beginner_str, function() end},
+            {"Intermediate - " .. hi_intermediate_str, function() end},
+            {"Expert - " .. hi_expert_str, function() end}
+        }
+    }
+    
+    toolpalette.register(menu)
+    
+    if marks == true then
+        toolpalette.enable("Marks", "Enable", false)
+    else
+        toolpalette.enable("Marks", "Disable", false)
+    end
+end
 ----------------------
 ----------------------
 
