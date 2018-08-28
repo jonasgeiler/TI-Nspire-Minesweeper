@@ -340,13 +340,13 @@ function revealAllMines()
     for y,row in pairs(fieldReal) do
         for x,col in pairs(row) do
             if col == tile.bomb then
-                if field[y][x] ~= tile.clicked_bomb then
-                    set(x,y,tile.bomb)
+                if field[y][x] ~= tile.clicked_bomb and field[y][x] ~= tile.flag then
+                        set(x,y,tile.bomb)
                 end
             end
             if field[y][x] == tile.flag and fieldReal[y][x] ~= tile.bomb then
                 set(x,y,tile.wrong_bomb)
-            end
+             end
         end
     end
 end
@@ -550,244 +550,38 @@ function on.paint(gc)
     gc:setColorRGB(192, 192, 192)
     gc:fillRect(0, 0, platform.window:width(), platform.window:height())
     gc:setColorRGB(0, 0, 0)
-    if currentLevel == 'beginner' then
-        fieldX = platform.window:width()/2 - fieldWidth/2
-        fieldY = platform.window:height() - fieldHeight - 10
-        
-        gc:drawImage(images.border_split_left, fieldX - images.border_corner_top_left:width(), fieldY - images.border_corner_top_left:height())
-        gc:drawImage(images.border_split_right, fieldX + numCols * tileSize, fieldY - images.border_corner_top_right:height())
-        gc:drawImage(images.border_corner_bottom_left, fieldX - images.border_corner_bottom_left:width(), fieldY + numRows * tileSize)
-        gc:drawImage(images.border_corner_bottom_right, fieldX + numCols * tileSize, fieldY + numRows * tileSize)
-        
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY)
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 1)
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 2)
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 3)
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 4)
-        
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY)
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 1)
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 2)
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 3)
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 4)
-        
-        gc:drawImage(images.border_horizontal, fieldX, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 3, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 4, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 5, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 6, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 7, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 8, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 9, fieldY - images.border_horizontal:height())
-        
-        gc:drawImage(images.border_horizontal, fieldX, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 3, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 4, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 5, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 6, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 7, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 8, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 9, fieldY + numRows * tileSize)
-           
-        drawField(gc, fieldX, fieldY)
-        
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), 0)
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, 0)
-        gc:drawImage(images.border_corner_top_left, fieldX - images.border_corner_top_left:width(), 0)
-        gc:drawImage(images.border_corner_top_right, fieldX + numCols * tileSize, 0)
-        
-        gc:drawImage(images.border_horizontal, fieldX, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 3, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 4, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 5, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 6, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 7, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 8, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 9, 0)
-        
-        drawNum(gc, mineCount, fieldX - 1, 10 - 1)
-        drawNum(gc, time, fieldX + numCols * tileSize - 3 * (images.num0:width() - 1), 10 - 1)
-        drawSmiley(gc, platform.window:width()/2 - images.smiley_smile:width()/2 - 1, 10 - 1)
-        
-        drawCursor(gc, fieldX, fieldY)
-    elseif currentLevel == 'intermediate' then
-        fieldX = platform.window:width()/2 - fieldWidth/2
-        fieldY = platform.window:height() - fieldHeight - 10
-        
-        gc:drawImage(images.border_split_left, fieldX - images.border_corner_top_left:width(), fieldY - images.border_corner_top_left:height())
-        gc:drawImage(images.border_split_right, fieldX + numCols * tileSize, fieldY - images.border_corner_top_right:height())
-        gc:drawImage(images.border_corner_bottom_left, fieldX - images.border_corner_bottom_left:width(), fieldY + numRows * tileSize)
-        gc:drawImage(images.border_corner_bottom_right, fieldX + numCols * tileSize, fieldY + numRows * tileSize)
-        
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY)
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 1)
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 2)
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 3)
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 4)
-        
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY)
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 1)
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 2)
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 3)
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 4)
-        
-        gc:drawImage(images.border_horizontal, fieldX, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 3, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 4, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 5, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 6, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 7, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 8, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 9, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 10, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 11, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 12, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 13, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 14, fieldY - images.border_horizontal:height())
-        
-        gc:drawImage(images.border_horizontal, fieldX, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 3, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 4, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 5, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 6, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 7, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 8, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 9, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 10, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 11, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 12, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 13, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 14, fieldY + numRows * tileSize)
-        
-        drawField(gc, fieldX, fieldY)
-        
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), 0)
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, 0)
-        gc:drawImage(images.border_corner_top_left, fieldX - images.border_corner_top_left:width(), 0)
-        gc:drawImage(images.border_corner_top_right, fieldX + numCols * tileSize, 0)
-        
-        gc:drawImage(images.border_horizontal, fieldX, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 3, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 4, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 5, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 6, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 7, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 8, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 9, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 10, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 11, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 12, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 13, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 14, 0)
-        
-        drawNum(gc, mineCount, fieldX - 1, 10 - 1)
-        drawNum(gc, time, fieldX + numCols * tileSize - 3 * (images.num0:width() - 1), 10 - 1)
-        drawSmiley(gc, platform.window:width()/2 - images.smiley_smile:width()/2 - 1, 10 - 1)
-        
-        drawCursor(gc, fieldX, fieldY)
-    elseif currentLevel == 'expert' then
-        fieldX = platform.window:width()/2 - fieldWidth/2
-        fieldY = platform.window:height() - fieldHeight - 10
-        
-        gc:drawImage(images.border_split_left, fieldX - images.border_corner_top_left:width(), fieldY - images.border_corner_top_left:height())
-        gc:drawImage(images.border_split_right, fieldX + numCols * tileSize, fieldY - images.border_corner_top_right:height())
-        gc:drawImage(images.border_corner_bottom_left, fieldX - images.border_corner_bottom_left:width(), fieldY + numRows * tileSize)
-        gc:drawImage(images.border_corner_bottom_right, fieldX + numCols * tileSize, fieldY + numRows * tileSize)
-        
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY)
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 1)
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 2)
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 3)
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), fieldY + images.border_vertical:height() * 4)
-        
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY)
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 1)
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 2)
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 3)
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, fieldY + images.border_vertical:height() * 4)
-        
-        gc:drawImage(images.border_horizontal, fieldX, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 3, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 4, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 5, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 6, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 7, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 8, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 9, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 10, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 11, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 12, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 13, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 14, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 15, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 16, fieldY - images.border_horizontal:height())
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 17, fieldY - images.border_horizontal:height())
-        
-        gc:drawImage(images.border_horizontal, fieldX, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 3, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 4, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 5, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 6, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 7, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 8, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 9, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 10, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 11, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 12, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 13, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 14, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 15, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 16, fieldY + numRows * tileSize)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 17, fieldY + numRows * tileSize)
-        
-        drawField(gc, fieldX, fieldY)
-        
-        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(), 0)
-        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize, 0)
-        gc:drawImage(images.border_corner_top_left, fieldX - images.border_corner_top_left:width(), 0)
-        gc:drawImage(images.border_corner_top_right, fieldX + numCols * tileSize, 0)
-        
-        gc:drawImage(images.border_horizontal, fieldX, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 1, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 2, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 3, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 4, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 5, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 6, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 7, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 8, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 9, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 10, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 11, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 12, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 13, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 14, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 15, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 16, 0)
-        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * 17, 0)
-        
-        drawNum(gc, mineCount, fieldX - 1, 10 - 1)
-        drawNum(gc, time, fieldX + numCols * tileSize - 3 * (images.num0:width() - 1), 10 - 1)
-        drawSmiley(gc, platform.window:width()/2 - images.smiley_smile:width()/2 - 1, 10 - 1)
-        
-        drawCursor(gc, fieldX, fieldY)
+
+    fieldX = platform.window:width()/2 - fieldWidth/2
+    fieldY = platform.window:height() - fieldHeight - 10
+
+    gc:drawImage(images.border_split_left,          fieldX - images.border_corner_top_left:width(),         fieldY - images.border_corner_top_left:height())
+    gc:drawImage(images.border_split_right,         fieldX + numCols * tileSize,                            fieldY - images.border_corner_top_right:height())
+    gc:drawImage(images.border_corner_bottom_left,  fieldX - images.border_corner_bottom_left:width(),      fieldY + numRows * tileSize)
+    gc:drawImage(images.border_corner_bottom_right, fieldX + numCols * tileSize,                            fieldY + numRows * tileSize)
+
+    for i = 0, 4 do
+        gc:drawImage(images.border_vertical, fieldX - images.border_vertical:width(),   fieldY + images.border_vertical:height() * i)
+        gc:drawImage(images.border_vertical, fieldX + numCols * tileSize,               fieldY + images.border_vertical:height() * i)
     end
+    
+    for i = 0, numCols-1 do
+        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * i, fieldY - images.border_horizontal:height())
+        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * i, fieldY + numRows * tileSize)
+        gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * i, 0)
+    end
+
+    drawField(gc, fieldX, fieldY)
+
+    gc:drawImage(images.border_vertical,            fieldX - images.border_vertical:width(),        0)
+    gc:drawImage(images.border_vertical,            fieldX + numCols * tileSize,                    0)
+    gc:drawImage(images.border_corner_top_left,     fieldX - images.border_corner_top_left:width(), 0)
+    gc:drawImage(images.border_corner_top_right,    fieldX + numCols * tileSize,                    0)
+
+    drawNum(gc,     mineCount,  fieldX - 1,                                                     10 - 1)
+    drawNum(gc,     time,       fieldX + numCols * tileSize - 3 * (images.num0:width() - 1),    10 - 1)
+    drawSmiley(gc,  platform.window:width()/2 - images.smiley_smile:width()/2 - 1,              10 - 1)
+
+    drawCursor(gc, fieldX, fieldY)
 end
 -----------------
 -----------------
@@ -915,8 +709,3 @@ function reloadMenu()
 end
 ----------------------
 ----------------------
-
-
-
-
-
