@@ -288,11 +288,10 @@ function flag()
     elseif currTile == tile.flag then
         if marks then
             field[cursorY][cursorX] = tile.marked
-            mineCount = mineCount + 1
         else
             field[cursorY][cursorX] = tile.normal
-            mineCount = mineCount + 1
         end
+        mineCount = mineCount + 1
     elseif currTile == tile.marked then
         field[cursorY][cursorX] = tile.normal
     end
@@ -336,12 +335,16 @@ function revealAllEmpty(x,y)
     end
 end
 
-function revealAllMines()
+function revealAllMines(defaultToFlag)
     for y,row in pairs(fieldReal) do
         for x,col in pairs(row) do
             if col == tile.bomb then
                 if field[y][x] ~= tile.clicked_bomb and field[y][x] ~= tile.flag then
+                    if defaultToFlag then
+                        set(x,y,tile.flag)
+                    else
                         set(x,y,tile.bomb)
+                    end
                 end
             end
             if field[y][x] == tile.flag and fieldReal[y][x] ~= tile.bomb then
@@ -360,11 +363,7 @@ function hasWon()
             end
         end
     end
-    
-    if revealedNum + numMines == numRows * numCols then
-        return true
-    end
-    return false
+    return revealedNum + numMines == numRows * numCols
 end
 
 function startGame()
@@ -454,21 +453,17 @@ function checkHighscore()
 end
 
 function gameOver(win)
+    gameover = true
+    timer.stop()
     if win then
-        gameover = true
-        timer.stop()
         smileyState = smiley.cool
-        
         checkHighscore()
-        
-        platform.window:invalidate()
+        revealAllMines(true)
     else
-        gameover = true
-        timer.stop()
         smileyState = smiley.dead
-        revealAllMines()
-        platform.window:invalidate()
+        revealAllMines(false)
     end
+    platform.window:invalidate()
 end
 -------------------
 -------------------
