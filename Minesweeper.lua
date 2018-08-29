@@ -240,38 +240,29 @@ function setMines()
     end
 end
 
+function isTileInGrid(x, y)
+    return y-1 > 0 and y+1 <=numRows and x+1 <= numCols and x-1 > 0
+end
+
+function countMines(y, x)
+    number = 0
+    for x1 = -1, 1 do
+        for y1 = -1, 1 do
+            if (not (x1 == 0 and y1 == 0)) and isTileInGrid(x+x1, y+y1) then
+                if fieldReal[y+y1][x+x1] == 9 then
+                    number = number + 1
+                end
+            end
+        end
+    end
+    return number
+end
+
 function setHints()
     for y,row in pairs(fieldReal) do
         for x,col in pairs(row) do
             if fieldReal[y][x] ~= 9 then
-                number = 0
-                
-                if y-1 > 0 and fieldReal[y-1][x] == 9 then
-                    number = number + 1
-                end
-                if y-1 > 0 and x+1 <= numCols and fieldReal[y-1][x+1] == 9 then
-                    number = number + 1
-                end
-                if x+1 <= numCols and fieldReal[y][x+1] == 9 then
-                    number = number + 1
-                end
-                if y+1 <= numRows and x+1 <= numCols and fieldReal[y+1][x+1] == 9 then
-                    number = number + 1
-                end
-                if y+1 <= numRows and fieldReal[y+1][x] == 9 then
-                    number = number + 1
-                end
-                if y+1 <= numRows and x-1 > 0 and fieldReal[y+1][x-1] == 9 then
-                    number = number + 1
-                end
-                if x-1 > 0 and fieldReal[y][x-1] == 9 then
-                    number = number + 1
-                end
-                if y-1 > 0 and x-1 > 0 and fieldReal[y-1][x-1] == 9 then
-                    number = number + 1
-                end
-                
-                fieldReal[y][x] = number
+                fieldReal[y][x] = countMines(y, x)
             end
         end
     end
@@ -493,34 +484,22 @@ end
 
 function drawNum(gc, num, x, y)
     numStr = tostring(num)
-    prefix = ''
-
-    if numStr:sub(1,1) ~= '-' then
-        if numStr:len() == 1 then
-            prefix = '00'
-        end
-        
-        if numStr:len() == 2 then
-            prefix = '0'
-        end
-        
-        numStr = prefix .. numStr
-        
-        gc:drawImage(images['num'..numStr:sub(1,1)], x, y)
-        gc:drawImage(images['num'..numStr:sub(2,2)], x + images.num0:width() - 1, y)
-        gc:drawImage(images['num'..numStr:sub(3,3)], x + images.num0:width()*2 - 2, y)
-    else
+    if numStr[1] == '-' then
         numStr = numStr:sub(2)
-    
         if numStr:len() == 1 then
-            prefix = '0'
+            numStr = '0'..numStr
         end
-        
-        numStr = prefix .. numStr
         
         gc:drawImage(images.numMinus, x, y)
-        gc:drawImage(images['num'..numStr:sub(1,1)], x + images.num0:width() - 1, y)
-        gc:drawImage(images['num'..numStr:sub(2,2)], x + images.num0:width()*2 - 2, y)
+        gc:drawImage(images['num'..numStr[1]], x + images.num0:width() - 1, y)
+        gc:drawImage(images['num'..numStr[2]], x + images.num0:width()*2 - 2, y)
+    else
+        numStr = '00'..numStr
+        numStr = numStr:sub(numStr:len()-2,numStr:len());
+        
+        gc:drawImage(images['num'..numStr[1]], x, y)
+        gc:drawImage(images['num'..numStr[2]], x + images.num0:width() - 1, y)
+        gc:drawImage(images['num'..numStr[3]], x + images.num0:width()*2 - 2, y)
     end
 end
 
@@ -535,7 +514,6 @@ end
 function drawCursor(gc, fieldX, fieldY)
     x = fieldX + tileSize * (cursorX-1)
     y = fieldY + tileSize * (cursorY-1)
-    
     
     gc:setPen('medium')
     gc:drawRect(x-1, y-1, tileSize+1, tileSize+1)
@@ -593,8 +571,6 @@ function setLevel(_, level)
     platform.window:invalidate()
 end
 
-
-
 function getHighscoreStrings()
     local hi_beginner, hi_intermediate, hi_expert = getHighscores()
     
@@ -628,15 +604,11 @@ function restart()
 end
 
 function toggleMarks(_, toggle)
-    if toggle == "Enable" then
-        marks = true
-        toolpalette.enable("Marks", "Enable", false)
-        toolpalette.enable("Marks", "Disable", true)
-    elseif toggle == "Disable" then
-        marks = false
-        toolpalette.enable("Marks", "Enable", true)
-        toolpalette.enable("Marks", "Disable", false)
-        
+    marks = toggle == "Enable"
+    toolpalette.enable("Marks", "Enable", marks)
+    toolpalette.enable("Marks", "Disable", not marks)
+
+    if toggle == "Disable" then
         for y,row in pairs(field) do
             for x,col in pairs(row) do
                 if col == tile.marked then
@@ -696,7 +668,7 @@ function reloadMenu()
     
     toolpalette.register(menu)
     
-    if marks == true then
+    if marks then
         toolpalette.enable("Marks", "Enable", false)
     else
         toolpalette.enable("Marks", "Disable", false)
