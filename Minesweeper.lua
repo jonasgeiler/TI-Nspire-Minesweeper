@@ -241,7 +241,7 @@ function setMines()
 end
 
 function isTileInGrid(x, y)
-    return y-1 > 0 and y+1 <=numRows and x+1 <= numCols and x-1 > 0
+    return y > 0 and y <=numRows and x <= numCols and x > 0
 end
 
 function countMines(y, x)
@@ -484,22 +484,22 @@ end
 
 function drawNum(gc, num, x, y)
     numStr = tostring(num)
-    if numStr[1] == '-' then
+    if numStr:sub(1,1) == '-' then
         numStr = numStr:sub(2)
         if numStr:len() == 1 then
             numStr = '0'..numStr
         end
         
         gc:drawImage(images.numMinus, x, y)
-        gc:drawImage(images['num'..numStr[1]], x + images.num0:width() - 1, y)
-        gc:drawImage(images['num'..numStr[2]], x + images.num0:width()*2 - 2, y)
+        gc:drawImage(images['num'..numStr:sub(1,1)], x + images.num0:width() - 1, y)
+        gc:drawImage(images['num'..numStr:sub(2,2)], x + images.num0:width()*2 - 2, y)
     else
         numStr = '00'..numStr
         numStr = numStr:sub(numStr:len()-2,numStr:len());
         
-        gc:drawImage(images['num'..numStr[1]], x, y)
-        gc:drawImage(images['num'..numStr[2]], x + images.num0:width() - 1, y)
-        gc:drawImage(images['num'..numStr[3]], x + images.num0:width()*2 - 2, y)
+        gc:drawImage(images['num'..numStr:sub(1,1)], x, y)
+        gc:drawImage(images['num'..numStr:sub(2,2)], x + images.num0:width() - 1, y)
+        gc:drawImage(images['num'..numStr:sub(3,3)], x + images.num0:width()*2 - 2, y)
     end
 end
 
