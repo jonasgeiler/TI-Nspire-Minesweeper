@@ -605,8 +605,8 @@ end
 
 function toggleMarks(_, toggle)
     marks = toggle == "Enable"
-    toolpalette.enable("Marks", "Enable", marks)
-    toolpalette.enable("Marks", "Disable", not marks)
+    toolpalette.enable("Marks", "Enable", not marks)
+    toolpalette.enable("Marks", "Disable", marks)
 
     if toggle == "Disable" then
         for y,row in pairs(field) do
