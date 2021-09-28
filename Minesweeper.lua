@@ -103,7 +103,7 @@ function goUp
     end
 end
 
-function goDown
+function goDown()
     if gameover then return end
 
     if cursorY < numRows then
@@ -115,7 +115,7 @@ function goDown
     end
 end
 
-function goLeft
+function goLeft()
     if gameover then return end
 
     if cursorX - 1 > 0 then
@@ -127,7 +127,7 @@ function goLeft
     end
 end
 
-function goRight
+function goRight()
     if gameover then return end
 
     if cursorX < numCols then
@@ -139,10 +139,10 @@ function goRight
     end
 end
 
-function on.arrowUp() goUp end
-function on.arrowDown() goDown end
-function on.arrowLeft() goLeft end
-function on.arrowRight() goRight end
+function on.arrowUp() goUp() end
+function on.arrowDown() goDown() end
+function on.arrowLeft() goLeft() end
+function on.arrowRight() goRight() end
 
 function on.charIn(char)
     if gameover then return end
