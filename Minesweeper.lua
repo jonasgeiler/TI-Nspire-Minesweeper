@@ -91,7 +91,7 @@ function on.timer()
     platform.window:invalidate()
 end
 
-function on.arrowUp()
+function goUp
     if gameover then return end
 
     if cursorY - 1 > 0 then
@@ -103,7 +103,7 @@ function on.arrowUp()
     end
 end
 
-function on.arrowDown()
+function goDown
     if gameover then return end
 
     if cursorY < numRows then
@@ -115,7 +115,7 @@ function on.arrowDown()
     end
 end
 
-function on.arrowLeft()
+function goLeft
     if gameover then return end
 
     if cursorX - 1 > 0 then
@@ -127,7 +127,7 @@ function on.arrowLeft()
     end
 end
 
-function on.arrowRight()
+function goRight
     if gameover then return end
 
     if cursorX < numCols then
@@ -139,12 +139,24 @@ function on.arrowRight()
     end
 end
 
+function on.arrowUp() goUp end
+function on.arrowDown() goDown end
+function on.arrowLeft() goLeft end
+function on.arrowRight() goRight end
+
 function on.charIn(char)
     if gameover then return end
     
-    if char == '−' or char == 'f' then
-        flag()
-    end
+    if char == '−' or char == 'f' then flag() return end
+    if char == '8' then goUp() return end
+    if char == '2' then goDown() return end
+    if char == '4' then goLeft() return end
+    if char == '6' then goRight() return end
+
+    if char == '7' then goUp() goLeft() return end
+    if char == '9' then goUp() goRight() return end
+    if char == '1' then goDown() goLeft() return end
+    if char == '3' then goDown() goRight() return end
 end
 
 function on.enterKey()
@@ -674,5 +686,6 @@ function reloadMenu()
         toolpalette.enable("Marks", "Disable", false)
     end
 end
+
 ----------------------
 ----------------------
