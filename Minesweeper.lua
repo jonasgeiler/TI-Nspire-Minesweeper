@@ -91,7 +91,7 @@ function on.timer()
     platform.window:invalidate()
 end
 
-function goUp
+function goUp()
     if gameover then return end
 
     if cursorY - 1 > 0 then
