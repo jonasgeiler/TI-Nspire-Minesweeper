@@ -632,30 +632,6 @@ function toggleMarks(_, toggle)
     end
 end
 
-hi_beginner_str, hi_intermediate_str, hi_expert_str = getHighscoreStrings()
-
-menu = {
-    {"Level",
-        {"Restart", restart},
-        "-",
-        {"Beginner", setLevel},
-        {"Intermediate", setLevel},
-        {"Expert", setLevel}
-    },
-    {"Marks",
-        {"Enable", toggleMarks},
-        {"Disable", toggleMarks}
-    },
-    {"Highscores",
-        {"Beginner - " .. hi_beginner_str, function() end},
-        {"Intermediate - " .. hi_intermediate_str, function() end},
-        {"Expert - " .. hi_expert_str, function() end}
-    }
-}
-
-toolpalette.register(menu)
-toolpalette.enable("Marks", "Disable", false)
-
 function reloadMenu()
     hi_beginner_str, hi_intermediate_str, hi_expert_str = getHighscoreStrings()
     
@@ -686,6 +662,8 @@ function reloadMenu()
         toolpalette.enable("Marks", "Disable", false)
     end
 end
+
+reloadMenu()
 
 ----------------------
 ----------------------
