@@ -402,6 +402,13 @@ function startGame()
     end
 end
 
+function getMarksSetting()
+    if not var.recall("marks") then
+        return false
+    end
+    return var.recall("marks")
+end
+
 function getHighscores()
     local hi_beginner = nil
 
@@ -617,6 +624,7 @@ end
 
 function toggleMarks(_, toggle)
     marks = toggle == "Enable"
+    var.store("marks", marks)
     toolpalette.enable("Marks", "Enable", not marks)
     toolpalette.enable("Marks", "Disable", marks)
 
@@ -663,6 +671,7 @@ function reloadMenu()
     end
 end
 
+marks = getMarksSetting()
 reloadMenu()
 
 ----------------------
