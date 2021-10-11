@@ -409,53 +409,29 @@ function getMarksSetting()
     return var.recall("marks")
 end
 
+-- returns array with { hi_beginner, hi_intermedate, hi_expert }
 function getHighscores()
-    local hi_beginner = nil
-
-    if not var.recall("hi_beginner") then
-        hi_beginner = -1
-        var.store("hi_beginner", hi_beginner)
-    else
-        hi_beginner = var.recall("hi_beginner")
+    if not var.recall("highscores") then
+        var.store("highscores", {-1, -1, -1})
+        return {-1, -1, -1}
     end
-    
-    
-    local hi_intermediate = nil
-    
-    if not var.recall("hi_intermediate") then
-        hi_intermediate = -1
-        var.store("hi_intermediate", hi_intermediate)
-    else
-        hi_intermediate = var.recall("hi_intermediate")
-    end
-    
-    
-    local hi_expert = nil
-    
-    if not var.recall("hi_expert") then
-        hi_expert = -1
-        var.store("hi_expert", hi_expert)
-    else
-        hi_expert = var.recall("hi_expert")
-    end
-    
-    return hi_beginner, hi_intermediate, hi_expert
+    return var.recall("highscores")
 end
 
 function checkHighscore()
-    local hi_beginner, hi_intermediate, hi_expert = getHighscores()
+    local highscores = getHighscores()
     
     if currentLevel == 'beginner' then
-        if hi_beginner == -1 or time < hi_beginner then
-            var.store("hi_beginner", time)
+        if highscores[1] == -1 or time < highscores[1] then
+            var.storeAt("highscores", time, 1)
         end
     elseif currentLevel == 'intermediate' then
-        if hi_intermediate == -1 or time < hi_intermediate then
-            var.store("hi_intermediate", time)
+        if highscores[2] == -1 or time < highscores[2] then
+            var.storeAt("highscores", time, 2)
         end
     elseif currentLevel == 'expert' then
-        if hi_expert == -1 or time < hi_expert then
-            var.store("hi_expert", time)
+        if highscores[3] == -1 or time < highscores[3] then
+            var.storeAt("highscores", time, 3)
         end
     end
     
@@ -591,29 +567,18 @@ function setLevel(_, level)
 end
 
 function getHighscoreStrings()
-    local hi_beginner, hi_intermediate, hi_expert = getHighscores()
-    
-    local hi_beginner_str, hi_intermediate_str, hi_expert_str
-    
-    if hi_beginner == -1 then
-        hi_beginner_str = "None"
-    else
-        hi_beginner_str = hi_beginner .. " sec"
+    local highscores = getHighscores()
+    local highscoreStrings = {}
+
+    for i = 1, 3, 1 do
+        if highscores[i] == -1 then
+            highscoreStrings[i] = "None"
+        else
+            highscoreStrings[i] = highscores[i] .. " sec"
+        end
     end
     
-    if hi_intermediate == -1 then
-        hi_intermediate_str = "None"
-    else
-        hi_intermediate_str = hi_intermediate .. " sec"
-    end
-        
-    if hi_expert == -1 then
-        hi_expert_str = "None"
-    else
-        hi_expert_str = hi_expert .. " sec"
-    end
-    
-    return hi_beginner_str, hi_intermediate_str, hi_expert_str
+    return highscoreStrings
 end
 
 function restart()
@@ -641,7 +606,7 @@ function toggleMarks(_, toggle)
 end
 
 function reloadMenu()
-    hi_beginner_str, hi_intermediate_str, hi_expert_str = getHighscoreStrings()
+    local highscores = getHighscoreStrings()
     
     menu = {
         {"Level",
@@ -656,9 +621,9 @@ function reloadMenu()
             {"Disable", toggleMarks}
         },
         {"Highscores",
-            {"Beginner - " .. hi_beginner_str, function() end},
-            {"Intermediate - " .. hi_intermediate_str, function() end},
-            {"Expert - " .. hi_expert_str, function() end}
+            {"Beginner - " .. highscores[1], function() end},
+            {"Intermediate - " .. highscores[2], function() end},
+            {"Expert - " .. highscores[3], function() end}
         }
     }
     
