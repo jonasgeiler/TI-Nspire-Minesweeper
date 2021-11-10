@@ -41,7 +41,7 @@ Flag a cell if you are sure that there is a mine under it.
 ### .tns file from releases page
 
 Download the `.tns` file from the latest release
-[https://github.com/Skayo/TI-Nspire-Minesweeper/releases/latest](here) and copy
+[here](https://github.com/Skayo/TI-Nspire-Minesweeper/releases/latest) and copy
 it to your calculator.
 
 ### Using Luna
