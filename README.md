@@ -19,9 +19,11 @@ The images used are from the original Minesweeper Game. I don't own them.
 
 ## Controls
 
-| Move Cursor | Arrow Keys / Number Keys |
-| Open Cell   | Enter                    |
-| Flag Cell   | (-) or F                 |
+| Key(s)                   | Action      |
+|--------------------------|-------------|
+| Arrow Keys / Number Keys | Move Cursor |
+| Enter                    | Open Cell   |
+| (-) / F                  | Flag Cell   |
 
 Press menu to change difficulty or to enable/disable marks.
 
