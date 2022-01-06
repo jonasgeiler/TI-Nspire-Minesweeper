@@ -54,6 +54,7 @@ numCols = nil
 numMines = nil
 mineCount = 0
 time = 0
+paused = false
 marks = false
 madeFirstClick = false
 smileyState = smiley.smile
@@ -87,9 +88,14 @@ function on.escapeKey()
         gui.escapeKey()
         return
     end
+    if not gameover and madeFirstClick then
+        paused = true
+        platform.window:invalidate()
+    end
 end
 
 function on.timer()
+    if paused then return end
     time = time + 1
     if time >= 999 then
         gameOver(false)
@@ -151,7 +157,7 @@ function on.charIn(char)
         gui.charIn(ch)
         return
     end
-    if gameover then return end
+    if gameover or paused then return end
     
     if char == '−' or char == 'f' then flag() return end
     if char == '8' then goUp() return end
@@ -163,6 +169,11 @@ function on.charIn(char)
     if char == '9' then goUp() goRight() return end
     if char == '1' then goDown() goLeft() return end
     if char == '3' then goDown() goRight() return end
+
+    if char == 'p' and not gameover and madeFirstClick then
+        paused = true
+        platform.window:invalidate()
+    end
 end
 
 function on.enterKey()
@@ -172,6 +183,7 @@ function on.enterKey()
     end
 
     if gameover then return end
+    if paused then paused = false end
 
     if not madeFirstClick then
         setMines()
@@ -210,11 +222,11 @@ function on.backspaceKey()
 end
 
 function on.tabKey()
- gui.tabKey()
+    gui.tabKey()
 end
 
 function on.backtabKey()
- gui.backtabKey()
+    gui.backtabKey()
 end
 
 
@@ -241,7 +253,6 @@ function on.mouseUp(x,y)
 end
 
 function on.mouseMove(x,y)
-    --cursor.show()
     if x > platform.window:width()/2 - images.smiley_smile:width()/2 - 1 and y > 9 and x < platform.window:width()/2 + images.smiley_smile:width()/2 - 1 and y < 9 + images.smiley_smile:height() and smileyState == smiley.smile then
         cursor.set("hand pointer")
     else
@@ -254,6 +265,7 @@ function on.arrowKey(ar)
         gui.arrowKey(ar)
         return
     end
+    if paused then return end
     cursor.hide()
     if ar == "up" then goUp() end
     if ar == "down" then goDown() end
@@ -423,6 +435,7 @@ function startGame()
     
     smileyState = smiley.smile
     gameover = false
+    paused = false
     madeFirstClick = false
     time = 0
     field = {}
@@ -569,12 +582,14 @@ function drawCursor(gc, fieldX, fieldY)
 end
 
 function on.paint(gc)
-    gc:setColorRGB(192, 192, 192)
-    gc:fillRect(0, 0, platform.window:width(), platform.window:height())
-    gc:setColorRGB(0, 0, 0)
-
     fieldX = platform.window:width()/2 - fieldWidth/2
     fieldY = platform.window:height() - fieldHeight - 10
+
+    gc:setColorRGB(59, 110, 165)
+    gc:fillRect(0, 0, platform.window:width(), platform.window:height())
+    gc:setColorRGB(192, 192, 192)
+    gc:fillRect(fieldX - images.border_vertical:width(), 0, numCols * tileSize + images.border_vertical:width(), platform.window:height())
+    gc:setColorRGB(0, 0, 0)
 
     gc:drawImage(images.border_split_left,          fieldX - images.border_corner_top_left:width(),         fieldY - images.border_corner_top_left:height())
     gc:drawImage(images.border_split_right,         fieldX + numCols * tileSize,                            fieldY - images.border_corner_top_right:height())
@@ -592,8 +607,6 @@ function on.paint(gc)
         gc:drawImage(images.border_horizontal, fieldX + images.border_horizontal:width() * i, 0)
     end
 
-    drawField(gc, fieldX, fieldY)
-
     gc:drawImage(images.border_vertical,            fieldX - images.border_vertical:width(),        0)
     gc:drawImage(images.border_vertical,            fieldX + numCols * tileSize,                    0)
     gc:drawImage(images.border_corner_top_left,     fieldX - images.border_corner_top_left:width(), 0)
@@ -602,6 +615,17 @@ function on.paint(gc)
     drawNum(gc,     mineCount,  fieldX - 1,                                                     10 - 1)
     drawNum(gc,     time,       fieldX + numCols * tileSize - 3 * (images.num0:width() - 1),    10 - 1)
     drawSmiley(gc,  platform.window:width()/2 - images.smiley_smile:width()/2 - 1,              10 - 1)
+
+    if paused then
+        gc:setFont("sansserif", "b", 15)
+        gc:drawString("GAME PAUSED", 80, 80, "top")
+        gc:setFont("sansserif", "r", 12)
+        gc:drawString("Press Enter to resume", 80, 110, "top")
+        gui.paint(gc)
+        return
+    end
+
+    drawField(gc, fieldX, fieldY)
 
     drawCursor(gc, fieldX, fieldY)
     gui.paint(gc)
