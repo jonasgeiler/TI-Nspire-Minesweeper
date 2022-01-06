@@ -82,6 +82,13 @@ function on.construction()
     startGame()
 end
 
+function on.escapeKey()
+    if gui.nbWindows()>0 then
+        gui.escapeKey()
+        return
+    end
+end
+
 function on.timer()
     time = time + 1
     if time >= 999 then
@@ -139,12 +146,11 @@ function goRight()
     end
 end
 
-function on.arrowUp() goUp() end
-function on.arrowDown() goDown() end
-function on.arrowLeft() goLeft() end
-function on.arrowRight() goRight() end
-
 function on.charIn(char)
+    if gui.nbWindows()>0 then
+        gui.charIn(ch)
+        return
+    end
     if gameover then return end
     
     if char == '−' or char == 'f' then flag() return end
@@ -160,6 +166,11 @@ function on.charIn(char)
 end
 
 function on.enterKey()
+    if gui.nbWindows()>0 then
+        gui.enterKey()
+        return 
+    end
+
     if gameover then return end
 
     if not madeFirstClick then
@@ -189,12 +200,30 @@ function on.enterKey()
 end
 
 function on.backspaceKey()
+    if gui.nbWindows()>0 then
+        gui.backspaceKey()
+        return
+    end
     if gameover then
         restart()
     end
 end
 
+function on.tabKey()
+ gui.tabKey()
+end
+
+function on.backtabKey()
+ gui.backtabKey()
+end
+
+
 function on.mouseDown(x,y)
+    if gui.nbWindows()>0 then
+        gui.mouseDown(x,y)
+        return
+    end
+
     if x > platform.window:width()/2 - images.smiley_smile:width()/2 - 1 and y > 9 and x < platform.window:width()/2 + images.smiley_smile:width()/2 - 1 and y < 9 + images.smiley_smile:height() then
         if smileyState == smiley.smile then
             smileyState = smiley.smile_pressed
@@ -220,8 +249,16 @@ function on.mouseMove(x,y)
     end
 end
 
-function on.arrowKey()
+function on.arrowKey(ar)
+    if gui.nbWindows()>0 then
+        gui.arrowKey(ar)
+        return
+    end
     cursor.hide()
+    if ar == "up" then goUp() end
+    if ar == "down" then goDown() end
+    if ar == "left" then goLeft() end
+    if ar == "right" then goRight() end
 end 
 ----------------
 ----------------
@@ -409,6 +446,17 @@ function getMarksSetting()
     return var.recall("marks")
 end
 
+function openHighscoresWindow()
+    local highscores = getHighscoreStrings()
+    gui.addCustomWindow("Fastest Mine Sweepers",200,90)
+    gui.addButton("Reset Scores", function() resetScores() gui.closeWindow() end)
+    gui.addButton("OK", gui.closeWindow)
+    gui.addLabel(10,5,"beginner: " .. highscores[1])
+    gui.addLabel(10,32,"intermediate: " .. highscores[2])
+    gui.addLabel(10,59,"expert: " .. highscores[3])
+    gui.defaultFocus()
+end
+
 -- returns array with { hi_beginner, hi_intermedate, hi_expert }
 function getHighscores()
     if not var.recall("highscores") then
@@ -416,6 +464,12 @@ function getHighscores()
         return {-1, -1, -1}
     end
     return var.recall("highscores")
+end
+
+function resetScores()
+    for i = 1, 3 do
+        var.storeAt("highscores", -1, i)
+    end
 end
 
 function checkHighscore()
@@ -550,6 +604,7 @@ function on.paint(gc)
     drawSmiley(gc,  platform.window:width()/2 - images.smiley_smile:width()/2 - 1,              10 - 1)
 
     drawCursor(gc, fieldX, fieldY)
+    gui.paint(gc)
 end
 -----------------
 -----------------
@@ -621,9 +676,7 @@ function reloadMenu()
             {"Disable", toggleMarks}
         },
         {"Highscores",
-            {"Beginner - " .. highscores[1], function() end},
-            {"Intermediate - " .. highscores[2], function() end},
-            {"Expert - " .. highscores[3], function() end}
+            {"Open", openHighscoresWindow}
         }
     }
     
