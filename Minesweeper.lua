@@ -464,9 +464,12 @@ function openHighscoresWindow()
     gui.addCustomWindow("Fastest Mine Sweepers",200,90)
     gui.addButton("Reset Scores", function() resetScores() gui.closeWindow() end)
     gui.addButton("OK", gui.closeWindow)
-    gui.addLabel(10,5,"beginner: " .. highscores[1])
-    gui.addLabel(10,32,"intermediate: " .. highscores[2])
-    gui.addLabel(10,59,"expert: " .. highscores[3])
+    gui.addLabel(10,5, "beginner:")
+    gui.addLabel(10,32,"intermediate:")
+    gui.addLabel(10,59,"expert:")
+    gui.addLabel(90,5, highscores[1])
+    gui.addLabel(90,32,highscores[2])
+    gui.addLabel(90,59, highscores[3])
     gui.defaultFocus()
 end
 
@@ -618,9 +621,9 @@ function on.paint(gc)
 
     if paused then
         gc:setFont("sansserif", "b", 15)
-        gc:drawString("GAME PAUSED", 80, 80, "top")
+        gc:drawString("GAME PAUSED", 80, 90, "top")
         gc:setFont("sansserif", "r", 12)
-        gc:drawString("Press Enter to resume", 80, 110, "top")
+        gc:drawString("Press Enter to resume", 80, 120, "top")
         gui.paint(gc)
         return
     end
